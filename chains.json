@@ -1,0 +1,26 @@
+[
+  {
+    "chainId": "0x38",
+    "chainName": "BNB Smart Chain",
+    "nativeCurrency": {
+      "name": "BNB",
+      "symbol": "BNB",
+      "decimals": 18
+    },
+    "rpcUrls": ["https://bsc-dataseed.binance.org/"],
+    "blockExplorerUrls": ["https://bscscan.com"],
+    "icon": "https://cryptologos.cc/logos/binance-coin-bnb-logo.png"
+  },
+  {
+    "chainId": "0x89",
+    "chainName": "Polygon Mainnet",
+    "nativeCurrency": {
+      "name": "MATIC",
+      "symbol": "MATIC",
+      "decimals": 18
+    },
+    "rpcUrls": ["https://polygon-rpc.com"],
+    "blockExplorerUrls": ["https://polygonscan.com"],
+    "icon": "https://cryptologos.cc/logos/polygon-matic-logo.png"
+  }
+]
