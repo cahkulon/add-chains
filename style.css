@@ -61,3 +61,10 @@ input[type="text"], select {
 .card button:hover {
   background-color: #0056b3;
 }
+
+.card select {
+  margin-top: 6px;
+  width: 100%;
+  padding: 6px;
+  font-size: 14px;
+}
