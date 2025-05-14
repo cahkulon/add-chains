@@ -7,7 +7,11 @@
       "symbol": "BNB",
       "decimals": 18
     },
-    "rpcUrls": ["https://bsc-dataseed.binance.org/"],
+    "rpcUrls": [
+      "https://bsc-dataseed.binance.org/",
+      "https://rpc.ankr.com/bsc",
+      "https://bsc.rpc.blxrbdn.com"
+    ],
     "blockExplorerUrls": ["https://bscscan.com"]
   },
   {
@@ -20,16 +24,5 @@
     },
     "rpcUrls": ["https://polygon-rpc.com"],
     "blockExplorerUrls": ["https://polygonscan.com"]
-  },
-  {
-    "chainId": "0x1",
-    "chainName": "Ethereum Mainnet",
-    "nativeCurrency": {
-      "name": "ETH",
-      "symbol": "ETH",
-      "decimals": 18
-    },
-    "rpcUrls": ["https://mainnet.infura.io/v3/YOUR_INFURA_PROJECT_ID"],
-    "blockExplorerUrls": ["https://etherscan.io"]
   }
 ]
