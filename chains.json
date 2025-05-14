@@ -24,5 +24,16 @@
     },
     "rpcUrls": ["https://polygon-rpc.com"],
     "blockExplorerUrls": ["https://polygonscan.com"]
+  },
+  {
+    "chainId": "0x4e62f",
+    "chainName": "StarTowerChain",
+    "nativeCurrency": {
+      "name": "SAVW",
+      "symbol": "SAVW",
+      "decimals": 18
+    },
+    "rpcUrls": ["https://rip-dataseed.savwscan.com:8547"],
+    "blockExplorerUrls": ["https://savwscan.com"]
   }
 ]
