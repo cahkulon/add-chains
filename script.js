@@ -17,13 +17,27 @@ const displayChains = (chainList) => {
     const id = `chain-${index}`;
     chainMap[id] = chain;
 
+    const decimalId = parseInt(chain.chainId, 16);
+    const multipleRpc = chain.rpcUrls.length > 1;
+
+    let rpcElement = `<p><strong>RPC:</strong> ${chain.rpcUrls[0]}</p>`;
+    if (multipleRpc) {
+      const rpcOptions = chain.rpcUrls.map(url => `<option value="${url}">${url}</option>`).join('');
+      rpcElement = `
+        <label><strong>RPC URL:</strong></label>
+        <select data-rpc-select="${id}">
+          ${rpcOptions}
+        </select>
+      `;
+    }
+
     const card = document.createElement('div');
     card.className = 'card';
     card.innerHTML = `
       <h3>${chain.chainName}</h3>
-      <p><strong>Chain ID:</strong> ${chain.chainId}</p>
+      <p><strong>Chain ID:</strong> ${decimalId}</p>
       <p><strong>Symbol:</strong> ${chain.nativeCurrency.symbol}</p>
-      <p><strong>RPC:</strong> ${chain.rpcUrls[0]}</p>
+      ${rpcElement}
       <p><strong>Explorer:</strong> ${chain.blockExplorerUrls[0]}</p>
       <button data-id="${id}">Add Chain</button>
     `;
@@ -33,7 +47,14 @@ const displayChains = (chainList) => {
 
   document.querySelectorAll('button[data-id]').forEach(btn => {
     btn.addEventListener('click', () => {
-      const chain = chainMap[btn.getAttribute('data-id')];
+      const id = btn.getAttribute('data-id');
+      const chain = { ...chainMap[id] };
+
+      const select = document.querySelector(`select[data-rpc-select="${id}"]`);
+      if (select) {
+        chain.rpcUrls = [select.value];
+      }
+
       addChain(chain);
     });
   });
@@ -65,9 +86,7 @@ const loadChains = async () => {
 
 document.getElementById('searchInput').addEventListener('input', (e) => {
   const term = e.target.value.toLowerCase();
-  const filtered = chains.filter(c =>
-    c.chainName.toLowerCase().includes(term)
-  );
+  const filtered = chains.filter(c => c.chainName.toLowerCase().includes(term));
   displayChains(filtered);
 });
 
