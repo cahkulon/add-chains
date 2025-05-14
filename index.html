@@ -2,36 +2,25 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Add Chain Example</title>
+  <title>Chain Selector</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <button id="addChainBtn">Add Chain to MetaMask</button>
+  <div class="container">
+    <h1>Add Chain to Wallet</h1>
 
-  <script>
-    document.getElementById('addChainBtn').addEventListener('click', async () => {
-      if (window.ethereum) {
-        try {
-          await window.ethereum.request({
-            method: 'wallet_addEthereumChain',
-            params: [{
-              chainId: '0x89', // Contoh: Polygon Mainnet
-              chainName: 'Polygon Mainnet',
-              nativeCurrency: {
-                name: 'MATIC',
-                symbol: 'MATIC',
-                decimals: 18
-              },
-              rpcUrls: ['https://polygon-rpc.com/'],
-              blockExplorerUrls: ['https://polygonscan.com/']
-            }]
-          });
-        } catch (error) {
-          console.error('Gagal menambahkan jaringan:', error);
-        }
-      } else {
-        alert('MetaMask atau wallet yang mendukung belum terpasang!');
-      }
-    });
-  </script>
+    <div class="controls">
+      <select id="walletSelector">
+        <option value="metamask">MetaMask</option>
+        <option value="okx">OKX Wallet</option>
+        <option value="injected">Injected Wallet</option>
+      </select>
+      <input type="text" id="searchInput" placeholder="Search chain name..." />
+    </div>
+
+    <div id="chainCards" class="card-container"></div>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
