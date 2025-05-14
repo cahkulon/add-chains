@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Add Chain Example</title>
+</head>
+<body>
+  <button id="addChainBtn">Add Chain to MetaMask</button>
+
+  <script>
+    document.getElementById('addChainBtn').addEventListener('click', async () => {
+      if (window.ethereum) {
+        try {
+          await window.ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: [{
+              chainId: '0x89', // Contoh: Polygon Mainnet
+              chainName: 'Polygon Mainnet',
+              nativeCurrency: {
+                name: 'MATIC',
+                symbol: 'MATIC',
+                decimals: 18
+              },
+              rpcUrls: ['https://polygon-rpc.com/'],
+              blockExplorerUrls: ['https://polygonscan.com/']
+            }]
+          });
+        } catch (error) {
+          console.error('Gagal menambahkan jaringan:', error);
+        }
+      } else {
+        alert('MetaMask atau wallet yang mendukung belum terpasang!');
+      }
+    });
+  </script>
+</body>
+</html>
