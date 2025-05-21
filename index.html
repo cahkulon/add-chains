@@ -10,21 +10,14 @@
   <div class="container">
     <h1>Add Chain to Wallet</h1>
 
-    <p><strong>Supported Chains & Wallets:</strong></p>
-    <ul>
-      <li><strong>EVM (Ethereum, BSC, Polygon, etc):</strong> MetaMask, OKX Wallet</li>
-      <li><strong>Cosmos SDK (Osmosis, Juno, etc):</strong> Keplr Wallet</li>
-      <li><strong>SOL (Solana):</strong> Phantom Wallet</li>
-      <li><strong>BTC:</strong> Unisat Wallet</li>
-      <li><strong>SUI:</strong> Slush Wallet</li>
-    </ul>
-
     <div class="controls">
-      <select id="walletSelector">
-        <option value="metamask">MetaMask</option>
-        <option value="okx">OKX Wallet</option>
-        <option value="injected">Injected Wallet</option>
+      <select id="chainTypeSelector">
+        <option value="evm">EVM Chains</option>
+        <option value="cosmos">Cosmos Chains</option>
       </select>
+      <div id="walletSelectorContainer">
+        <!-- Wallet selectors will be inserted here based on chain type -->
+      </div>
       <input type="text" id="searchInput" placeholder="Search chain name..." />
     </div>
 

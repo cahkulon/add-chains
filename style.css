@@ -16,14 +16,20 @@ h1 {
 
 .controls {
   display: flex;
-  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
   margin-bottom: 20px;
+}
+
+.controls > * {
+  flex: 1;
+  min-width: 200px;
 }
 
 input[type="text"], select {
   padding: 8px;
   font-size: 16px;
-  width: 48%;
+  width: 100%;
 }
 
 .card-container {
@@ -67,23 +73,4 @@ input[type="text"], select {
   width: 100%;
   padding: 6px;
   font-size: 14px;
-}
-
-/* Additional styling for ecosystem info */
-.info {
-  background: #e9f4ff;
-  border: 1px solid #b3daff;
-  padding: 16px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-}
-
-.info ul {
-  margin: 0;
-  padding-left: 20px;
-}
-
-.info li {
-  font-size: 14px;
-  margin-bottom: 6px;
 }
