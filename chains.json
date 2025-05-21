@@ -35,5 +35,16 @@
     },
     "rpcUrls": ["https://rip-dataseed.savwscan.com:8547"],
     "blockExplorerUrls": ["https://savwscan.com"]
+  },
+  {
+    "chainId": "0x3481",
+    "chainName": "Bridgeless Mainnet",
+    "nativeCurrency": {
+      "name": "BRIDGE",
+      "symbol": "BRIDGE",
+      "decimals": 18
+    },
+    "rpcUrls": ["https://eth-rpc.node0.mainnet.bridgeless.com"],
+    "blockExplorerUrls": ["https://explorer.mainnet.bridgeless.com"]
   }
 ]
