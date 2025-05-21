@@ -12,6 +12,25 @@ const WALLETS = {
   ]
 };
 
+const TOKEN_ABI = [
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "symbol",
+    "outputs": [{"name": "", "type": "string"}],
+    "payable": false,
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "decimals",
+    "outputs": [{"name": "", "type": "uint8"}],
+    "payable": false,
+    "type": "function"
+  }
+];
+
 const sanitizeChain = (chain, chainType) => {
   if (chainType === 'evm') {
     return {
@@ -160,6 +179,135 @@ const addChain = async (chain, chainType) => {
   }
 };
 
+const fetchTokenDetails = async (tokenAddress, rpcUrl) => {
+  if (!rpcUrl) throw new Error("RPC URL not provided");
+  const provider = new ethers.providers.JsonRpcProvider(rpcUrl);
+  const tokenContract = new ethers.Contract(tokenAddress, TOKEN_ABI, provider);
+
+  const [symbol, decimals] = await Promise.all([
+    tokenContract.symbol().catch(() => ''),
+    tokenContract.decimals().catch(() => 18)
+  ]);
+
+  return { 
+    symbol: symbol || 'UNKNOWN', 
+    decimals: decimals.toString() || '18' 
+  };
+};
+
+
+const checkTokenInfo = async () => {
+  const tokenAddress = document.getElementById('tokenAddressInput').value.trim();
+  const rpcUrl = document.getElementById('tokenChainSelector').value;
+  const loadingElement = document.getElementById('addressLoading');
+
+  if (!tokenAddress) {
+    alert("Please enter token address");
+    return;
+  }
+
+  if (!ethers.utils.isAddress(tokenAddress)) {
+    alert("Please enter a valid token address");
+    return;
+  }
+
+  loadingElement.style.display = 'inline-block';
+  // Jangan readonly agar bisa diisi manual
+  document.getElementById('tokenSymbolInput').value = '';
+  document.getElementById('tokenDecimalsInput').value = '';
+
+  try {
+    const tokenDetails = await fetchTokenDetails(tokenAddress, rpcUrl);
+    document.getElementById('tokenSymbolInput').value = tokenDetails.symbol;
+    document.getElementById('tokenDecimalsInput').value = tokenDetails.decimals;
+    alert("Token info fetched successfully!");
+  } catch (error) {
+    console.error("Error fetching token details:", error);
+    alert("Failed to fetch token info: " + error.message);
+  } finally {
+    loadingElement.style.display = 'none';
+  }
+};
+
+
+const addToken = async () => {
+  const tokenAddress = document.getElementById('tokenAddressInput').value.trim();
+  const tokenSymbol = document.getElementById('tokenSymbolInput').value.trim();
+  const tokenDecimals = document.getElementById('tokenDecimalsInput').value.trim();
+  const rpcUrl = document.getElementById('tokenChainSelector').value;
+  const wallet = document.getElementById('walletSelector').value;
+  const chainType = document.getElementById('chainTypeSelector').value;
+
+  if (!tokenAddress || !tokenSymbol || !tokenDecimals) {
+    alert("Please check token info first and fill all required fields");
+    return;
+  }
+
+  if (!ethers.utils.isAddress(tokenAddress)) {
+    alert("Please enter a valid token address");
+    return;
+  }
+
+  const selectedChain = chains.find(chain => (chain.rpcUrls?.[0] === rpcUrl || chain.rpc === rpcUrl));
+  if (!selectedChain) {
+    alert("Selected chain not found");
+    return;
+  }
+
+  if (chainType === 'evm') {
+    let provider = null;
+    if (wallet === 'metamask' && window.ethereum?.isMetaMask) {
+      provider = window.ethereum;
+    } else if (wallet === 'okx' && window.okxwallet?.ethereum) {
+      provider = window.okxwallet.ethereum;
+    } else if (wallet === 'injected') {
+      provider = window.ethereum;
+    }
+
+    if (!provider) {
+      alert("Selected wallet provider not found.");
+      return;
+    }
+
+    try {
+      await provider.request({
+        method: 'wallet_watchAsset',
+        params: {
+          type: 'ERC20',
+          options: {
+            address: tokenAddress,
+            symbol: tokenSymbol,
+            decimals: parseInt(tokenDecimals),
+            chainId: selectedChain.chainId
+          }
+        }
+      });
+      alert('Token added successfully!');
+    } catch (err) {
+      console.error('Error adding token:', err);
+      alert('Failed to add token.');
+    }
+  } else if (chainType === 'cosmos') {
+    alert("Cosmos wallets typically don't support programmatic token addition. Please add the token manually in your wallet.");
+  }
+};
+
+const setupTokenUI = () => {
+  document.getElementById('checkTokenBtn').addEventListener('click', checkTokenInfo);
+  document.getElementById('addTokenBtn').addEventListener('click', addToken);
+  updateTokenChainSelector();
+};
+
+const updateTokenChainSelector = () => {
+  const selector = document.getElementById('tokenChainSelector');
+  selector.innerHTML = chains.map(chain => {
+    const rpcUrl = chain.rpcUrls?.[0] || chain.rpc || ""; // ambil rpc pertama
+    return `<option value="${rpcUrl}">${chain.chainName}</option>`;
+  }).join('');
+};
+
+
+
 const loadChains = async (chainType) => {
   let file = 'evm.json';
   if (chainType === 'cosmos') file = 'cosmos.json';
@@ -167,6 +315,12 @@ const loadChains = async (chainType) => {
   const res = await fetch(file);
   chains = await res.json();
   displayChains(chains, chainType);
+  
+  if (!document.getElementById('tokenSection')) {
+    setupTokenUI();
+  } else {
+    updateTokenChainSelector();
+  }
 };
 
 document.getElementById('chainTypeSelector').addEventListener('change', (e) => {
