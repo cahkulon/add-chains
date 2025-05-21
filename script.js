@@ -61,14 +61,24 @@ const displayChains = (chainList) => {
 };
 
 const addChain = async (chain) => {
-  const ethereum = window.ethereum;
-  if (!ethereum) {
-    alert("Wallet not detected.");
+  const wallet = document.getElementById('walletSelector').value;
+
+  let provider = null;
+  if (wallet === 'metamask' && window.ethereum?.isMetaMask) {
+    provider = window.ethereum;
+  } else if (wallet === 'okx' && window.okxwallet?.ethereum) {
+    provider = window.okxwallet.ethereum;
+  } else if (wallet === 'injected') {
+    provider = window.ethereum;
+  }
+
+  if (!provider) {
+    alert("Selected wallet provider not found.");
     return;
   }
 
   try {
-    await ethereum.request({
+    await provider.request({
       method: 'wallet_addEthereumChain',
       params: [sanitizeChain(chain)]
     });
@@ -79,7 +89,7 @@ const addChain = async (chain) => {
 };
 
 const loadChains = async () => {
-  const res = await fetch('chains.json');
+  const res = await fetch('evm.json');
   chains = await res.json();
   displayChains(chains);
 };
