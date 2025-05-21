@@ -1,0 +1,11 @@
+[
+  {
+    "chainId": "osmosis-1",
+    "chainName": "Osmosis",
+    "rest": "https://lcd-osmosis.keplr.app",
+    "rpc": "https://rpc-osmosis.keplr.app",
+    "bech32Config": {
+      "prefix": "osmo"
+    }
+  }
+]
