@@ -46,5 +46,16 @@
     },
     "rpcUrls": ["https://eth-rpc.node0.mainnet.bridgeless.com"],
     "blockExplorerUrls": ["https://explorer.mainnet.bridgeless.com"]
+  },
+  {
+    "chainId": "0x8147",
+    "chainName": "Curtis",
+    "nativeCurrency": {
+      "name": "APE",
+      "symbol": "APE",
+      "decimals": 18
+    },
+    "rpcUrls": ["https://curtis.rpc.caldera.xyz/http"],
+    "blockExplorerUrls": ["https://curtis.explorer.caldera.xyz"]
   }
 ]
