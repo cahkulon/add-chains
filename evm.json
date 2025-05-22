@@ -48,7 +48,7 @@
     "blockExplorerUrls": ["https://explorer.mainnet.bridgeless.com"]
   },
   {
-    "chainId": "0x8147",
+    "chainId": "0x8157",
     "chainName": "Curtis",
     "nativeCurrency": {
       "name": "APE",
