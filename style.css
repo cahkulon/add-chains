@@ -212,20 +212,80 @@ select:focus {
   cursor: not-allowed;
 }
 
+/* Tambahkan style untuk search container dan refresh button */
+.search-container {
+  position: relative;
+  flex: 1;
+  min-width: 200px;
+}
+
+#searchInput {
+  padding-right: 40px; /* Beri ruang untuk icon refresh */
+}
+
+#refreshBtn {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #7f8c8d;
+  transition: color 0.3s;
+}
+
+#refreshBtn:hover {
+  color: #3498db;
+}
+
+#refreshBtn i {
+  font-size: 18px;
+}
+
 @media (max-width: 768px) {
   .token-form {
     grid-template-columns: 1fr;
   }
-  
+
   .button-group {
     flex-direction: column;
   }
-  
+
   .controls {
     flex-direction: column;
   }
-  
+
   .card-container {
     grid-template-columns: 1fr;
   }
+}
+
+/* Tambahan untuk loader dari style HTML sebelumnya */
+.loader {
+  display: none;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.input-with-loader {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-with-loader input {
+  flex: 1;
+}
+
+.input-with-loader .loader {
+  margin-left: 8px;
 }
