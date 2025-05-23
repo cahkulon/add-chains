@@ -9,6 +9,10 @@ const WALLETS = {
   cosmos: [
     { value: 'keplr', name: 'Keplr Wallet' },
     { value: 'leap', name: 'Leap Wallet' }
+  ],
+  solana: [
+    { value: 'phantom', name: 'Phantom' },
+    { value: 'backpack', name: 'Backpack' }
   ]
 };
 
@@ -48,6 +52,13 @@ const sanitizeChain = (chain, chainType) => {
       rpc: chain.rpc,
       bech32Config: chain.bech32Config
     };
+  } else if (chainType === 'solana') {
+    return {
+      chainId: chain.chainId,
+      chainName: chain.chainName,
+      rpc: chain.rpc,
+      explorer: chain.explorer
+    };
   }
   return chain;
 };
@@ -65,15 +76,42 @@ const displayChains = (chainList, chainType) => {
       chainIdDisplay = `${parseInt(chain.chainId, 16)} (${chain.chainId})`;
     }
 
-    let rpcElement = `<p><strong>RPC:</strong> ${chain.rpcUrls?.[0] || chain.rpc}</p>`;
-    if (chain.rpcUrls?.length > 1) {
-      const rpcOptions = chain.rpcUrls.map(url => `<option value="${url}">${url}</option>`).join('');
-      rpcElement = `
-        <label><strong>RPC URL:</strong></label>
-        <select data-rpc-select="${id}">
-          ${rpcOptions}
-        </select>
-      `;
+    // Handle RPC URLs
+    let rpcElement = '';
+    if (chainType === 'evm') {
+      rpcElement = `<p><strong>RPC:</strong> ${chain.rpcUrls?.[0] || ''}</p>`;
+      if (chain.rpcUrls?.length > 1) {
+        const rpcOptions = chain.rpcUrls.map(url => `<option value="${url}">${url}</option>`).join('');
+        rpcElement = `
+          <label><strong>RPC URL:</strong></label>
+          <select data-rpc-select="${id}">
+            ${rpcOptions}
+          </select>
+        `;
+      }
+    } else if (chainType === 'cosmos') {
+      rpcElement = `<p><strong>RPC:</strong> ${chain.rpc || ''}</p>`;
+    } else if (chainType === 'solana') {
+      rpcElement = `<p><strong>RPC:</strong> ${Array.isArray(chain.rpc) ? chain.rpc[0] : chain.rpc || ''}</p>`;
+      if (Array.isArray(chain.rpc) && chain.rpc.length > 1) {
+        const rpcOptions = chain.rpc.map(url => `<option value="${url}">${url}</option>`).join('');
+        rpcElement = `
+          <label><strong>RPC URL:</strong></label>
+          <select data-rpc-select="${id}">
+            ${rpcOptions}
+          </select>
+        `;
+      }
+    }
+
+    // Handle Explorer URLs
+    let explorerElement = '';
+    if (chainType === 'evm' && chain.blockExplorerUrls?.[0]) {
+      explorerElement = `<p><strong>Explorer:</strong> <a href="${chain.blockExplorerUrls[0]}" target="_blank">${chain.blockExplorerUrls[0]}</a></p>`;
+    } else if (chainType === 'cosmos' && chain.explorer) {
+      explorerElement = `<p><strong>Explorer:</strong> <a href="${chain.explorer}" target="_blank">${chain.explorer}</a></p>`;
+    } else if (chainType === 'solana' && chain.explorer) {
+      explorerElement = `<p><strong>Explorer:</strong> <a href="${chain.explorer}" target="_blank">${chain.explorer}</a></p>`;
     }
 
     const card = document.createElement('div');
@@ -83,7 +121,7 @@ const displayChains = (chainList, chainType) => {
       <p><strong>Chain ID:</strong> ${chainIdDisplay}</p>
       ${chain.nativeCurrency ? `<p><strong>Symbol:</strong> ${chain.nativeCurrency.symbol}</p>` : ''}
       ${rpcElement}
-      ${chain.blockExplorerUrls ? `<p><strong>Explorer:</strong> ${chain.blockExplorerUrls[0]}</p>` : ''}
+      ${explorerElement}
       <button data-id="${id}" data-type="${chainType}">Add Chain</button>
     `;
 
@@ -178,6 +216,24 @@ const addChain = async (chain, chainType) => {
       } catch (err) {
         console.error('Error adding chain:', err);
         alert('Failed to add chain: ' + (err.message || err));
+      }
+    }
+  } else if (chainType === 'solana') {
+    if (wallet === 'phantom' && window.phantom?.solana?.isPhantom) {
+      try {
+        // Solana wallets typically don't have an "add chain" function
+        // We'll just notify the user to switch networks manually
+        alert(`Please switch to ${chain.chainName} (${chain.chainId}) manually in your Phantom wallet settings.`);
+      } catch (err) {
+        console.error('Error with Phantom wallet:', err);
+        alert('Failed to connect to Phantom: ' + (err.message || err));
+      }
+    } else if (wallet === 'backpack' && window.backpack?.isBackpack) {
+      try {
+        alert(`Please switch to ${chain.chainName} (${chain.chainId}) manually in your Backpack wallet settings.`);
+      } catch (err) {
+        console.error('Error with Backpack wallet:', err);
+        alert('Failed to connect to Backpack: ' + (err.message || err));
       }
     } else {
       alert(`Selected wallet provider (${wallet}) not found. Please make sure the wallet extension is installed and enabled.`);
@@ -286,6 +342,30 @@ const addToken = async () => {
   } else if (chainType === 'cosmos') {
     alert("Cosmos wallets typically don't support programmatic token addition. Please add the token manually in your wallet.");
   }
+  if (chainType === 'solana') {
+    if (wallet === 'phantom' && window.phantom?.solana?.isPhantom) {
+      try {
+        await window.phantom.solana.request({
+          method: 'spl_token_watchAsset',
+          params: {
+            address: tokenAddress,
+            symbol: tokenSymbol,
+            decimals: parseInt(tokenDecimals),
+            image: '' // You could add an image URL here if available
+          }
+        });
+        alert('Token added successfully!');
+      } catch (err) {
+        console.error('Error adding token:', err);
+        alert('Failed to add token: ' + (err.message || err));
+      }
+    } else if (wallet === 'backpack' && window.backpack?.isBackpack) {
+      alert("Backpack wallet doesn't currently support programmatic token addition. Please add the token manually.");
+    } else {
+      alert(`Selected wallet provider (${wallet}) not found. Please make sure the wallet extension is installed and enabled.`);
+    }
+    return;
+  }
 };
 
 const setupTokenUI = () => {
@@ -305,6 +385,7 @@ const updateTokenChainSelector = () => {
 const loadChains = async (chainType) => {
   let file = 'evm.json';
   if (chainType === 'cosmos') file = 'cosmos.json';
+  if (chainType === 'solana') file = 'solana.json';
 
   const res = await fetch(file);
   chains = await res.json();

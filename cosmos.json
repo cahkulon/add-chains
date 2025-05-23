@@ -6,6 +6,7 @@
     "rpc": "https://rpc-osmosis.keplr.app",
     "bech32Config": {
       "prefix": "osmo"
-    }
+    },
+    "explorer": "https://www.mintscan.io/osmosis"
   }
 ]

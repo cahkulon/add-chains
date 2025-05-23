@@ -1,0 +1,24 @@
+[
+  {
+    "chainId": "devnet",
+    "chainName": "Solana Devnet",
+    "rpc": "https://api.devnet.solana.com",
+    "explorer": "https://explorer.solana.com/?cluster=devnet"
+  },
+  {
+    "chainId": "mainnet-beta",
+    "chainName": "Solana Mainnet",
+    "rpc": "https://api.mainnet-beta.solana.com",
+    "explorer": "https://explorer.solana.com"
+  },
+  {
+    "chainId": "testnet",
+    "chainName": "Solana Testnet",
+    "rpc": [
+      "https://api.testnet.solana.com",
+      "https://solana-testnet.drpc.org",
+      "https://solana-api.projectserum.com"
+    ],
+    "explorer": "https://explorer.solana.com/?cluster=testnet"
+  }
+]
